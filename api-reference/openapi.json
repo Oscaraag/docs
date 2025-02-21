@@ -1,90 +1,261 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "API V2 ZeroQ Local",
+    "version": "2.0.0",
+    "description": "API para el sistema local de ZeroQ. Esta API maneja la gestión de atenciones, módulos, reservas y tickets en el sistema local."
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "/api/v2",
+      "description": "API V2 Base URL"
     }
   ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
-  "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Código de error"
+          },
+          "message": {
+            "type": "string",
+            "description": "Mensaje de error"
+          }
+        }
+      },
+      "AttentionRequest": {
+        "type": "object",
+        "required": ["cuid", "finishType"],
+        "properties": {
+          "cuid": {
+            "type": "string",
+            "description": "ID único del call"
+          },
+          "derivatedId": {
+            "type": "integer",
+            "description": "ID de la línea a la que se deriva"
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "ID del tópico"
+          },
+          "urgent": {
+            "type": "boolean",
+            "description": "Si la atención es urgente"
+          },
+          "meta": {
+            "type": "object",
+            "description": "Metadatos adicionales"
+          },
+          "attentionReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Lista de razones de atención"
+          },
+          "finishType": {
+            "type": "string",
+            "enum": ["normal", "skipped", "derivated"],
+            "description": "Tipo de finalización de la atención"
+          }
+        }
+      },
+      "IdentifyData": {
+        "type": "object",
+        "required": ["name1", "name2", "name3"],
+        "properties": {
+          "name1": {
+            "type": "string",
+            "description": "Primer nombre"
+          },
+          "name2": {
+            "type": "string",
+            "description": "Segundo nombre"
+          },
+          "name3": {
+            "type": "string",
+            "description": "Apellido"
+          }
+        }
+      },
+      "ModuleState": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID del módulo"
+          },
+          "state": {
+            "type": "string",
+            "enum": ["active", "paused", "offline", "working"],
+            "description": "Estado del módulo"
+          },
+          "current": {
+            "type": "object",
+            "properties": {
+              "cuid": {
+                "type": "string",
+                "description": "ID del call actual"
+              },
+              "attending": {
+                "type": "boolean",
+                "description": "Si está atendiendo"
+              }
             }
           }
-        ],
+        }
+      },
+      "Reservation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID de la reservación"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha y hora de la reservación"
+          },
+          "line_id": {
+            "type": "integer",
+            "description": "ID de la línea"
+          },
+          "check_in": {
+            "type": "boolean",
+            "description": "Si hizo check-in"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de eliminación"
+          }
+        }
+      },
+      "Line": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID de la línea"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre de la línea"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug único de la línea"
+          },
+          "prefix": {
+            "type": "string",
+            "description": "Prefijo para tickets"
+          }
+        }
+      },
+      "Call": {
+        "type": "object",
+        "properties": {
+          "cuid": {
+            "type": "string",
+            "description": "ID único del call"
+          },
+          "ruid": {
+            "type": "string",
+            "description": "ID de la reserva (si aplica)"
+          },
+          "tuid": {
+            "type": "string",
+            "description": "ID del ticket"
+          },
+          "line_id": {
+            "type": "integer",
+            "description": "ID de la línea"
+          },
+          "modulo_id": {
+            "type": "integer",
+            "description": "ID del módulo"
+          },
+          "rut": {
+            "type": "string",
+            "description": "RUT del cliente"
+          },
+          "prefix": {
+            "type": "string",
+            "description": "Prefijo del ticket"
+          },
+          "number": {
+            "type": "integer",
+            "description": "Número del ticket"
+          },
+          "attention_reason": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Razones de atención"
+          },
+          "attending": {
+            "type": "boolean",
+            "description": "Si está siendo atendido"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "api-key"
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "paths": {
+    "/attentions": {
+      "post": {
+        "tags": ["Atenciones"],
+        "summary": "Finaliza una atención",
+        "description": "Finaliza una atención en curso. Puede ser una finalización normal, una derivación a otra línea o marcar como saltado.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttentionRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Atención finalizada exitosamente",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 2000
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Call"
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
+            "description": "Error en el payload",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,28 +267,44 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/attentions/{cuid}": {
+      "get": {
+        "tags": ["Atenciones"],
+        "summary": "Vuelve a llamar un ticket",
+        "description": "Realiza un nuevo llamado para un ticket específico",
         "parameters": [
           {
-            "name": "id",
+            "name": "cuid",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+              "type": "string"
+            },
+            "description": "ID del call"
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "Ticket recuperado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 2000
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Call"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Error en el payload",
             "content": {
               "application/json": {
                 "schema": {
@@ -128,67 +315,99 @@
           }
         }
       }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+    },
+    "/modulos/state": {
+      "get": {
+        "tags": ["Módulos"],
+        "summary": "Obtiene el estado de todos los módulos",
+        "description": "Retorna el estado actual de todos los módulos registrados, incluyendo su estado de atención y tickets actuales.",
+        "responses": {
+          "200": {
+            "description": "Estado de módulos recuperado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModuleState"
+                  }
+                }
               }
             }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/reservations": {
+      "get": {
+        "tags": ["Reservaciones"],
+        "summary": "Obtiene todas las reservaciones no canceladas",
+        "description": "Retorna la lista de reservaciones activas, opcionalmente puede incluir filtros adicionales.",
+        "parameters": [
+          {
+            "name": "notFilter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Si es true, no aplica filtros adicionales"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reservaciones recuperadas exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reservation"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No hay reservaciones"
+          },
+          "500": {
+            "description": "Error interno"
+          }
+        }
+      }
+    },
+    "/line": {
+      "get": {
+        "tags": ["Líneas"],
+        "summary": "Obtiene información de líneas",
+        "description": "Retorna información de las líneas de atención. Puede filtrar por IDs específicos.",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Lista de IDs de líneas separados por coma"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Líneas recuperadas exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Line"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
