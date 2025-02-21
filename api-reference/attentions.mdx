@@ -1,0 +1,75 @@
+---
+title: 'Atenciones'
+description: 'Endpoints para la gestión de atenciones en el sistema'
+---
+
+## Finalizar Atención
+
+<ParamField body='cuid' type='string' required>
+  ID único del call
+</ParamField>
+
+<ParamField body='finishType' type='string' required>
+  Tipo de finalización de la atención. Valores permitidos: `normal`, `skipped`,
+  `derivated`
+</ParamField>
+
+<ParamField body='derivatedId' type='integer'>
+  ID de la línea a la que se deriva
+</ParamField>
+
+<ParamField body='topicId' type='integer'>
+  ID del tópico
+</ParamField>
+
+<ParamField body='urgent' type='boolean'>
+  Si la atención es urgente
+</ParamField>
+
+<ParamField body='meta' type='object'>
+  Metadatos adicionales
+</ParamField>
+
+<ParamField body='attentionReasons' type='array'>
+  Lista de razones de atención
+</ParamField>
+
+### Endpoint
+
+```bash
+POST /api/v2/attentions
+```
+
+### Respuesta
+
+<ResponseField name='code' type='integer'>
+  Código de respuesta
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Datos del call finalizado
+</ResponseField>
+
+## Volver a Llamar Ticket
+
+### Endpoint
+
+```bash
+GET /api/v2/attentions/{cuid}
+```
+
+### Parámetros URL
+
+<ParamField path='cuid' type='string' required>
+  ID del call a volver a llamar
+</ParamField>
+
+### Respuesta
+
+<ResponseField name='code' type='integer'>
+  Código de respuesta
+</ResponseField>
+
+<ResponseField name='data' type='object'>
+  Datos del call recuperado
+</ResponseField>{' '}

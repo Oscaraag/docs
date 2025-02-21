@@ -1,0 +1,38 @@
+---
+title: 'Líneas'
+description: 'Endpoints para la gestión de líneas de atención'
+---
+
+## Obtener Líneas
+
+Retorna información de las líneas de atención. Puede filtrar por IDs específicos.
+
+### Endpoint
+
+```bash
+GET /api/v2/line
+```
+
+### Parámetros Query
+
+<ParamField query='ids' type='string'>
+  Lista de IDs de líneas separados por coma
+</ParamField>
+
+### Respuesta
+
+<ResponseField name='id' type='integer'>
+  ID de la línea
+</ResponseField>
+
+<ResponseField name='name' type='string'>
+  Nombre de la línea
+</ResponseField>
+
+<ResponseField name='slug' type='string'>
+  Slug único de la línea
+</ResponseField>
+
+<ResponseField name='prefix' type='string'>
+  Prefijo para tickets
+</ResponseField>{' '}

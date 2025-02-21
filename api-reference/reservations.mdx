@@ -1,0 +1,50 @@
+---
+title: 'Reservaciones'
+description: 'Endpoints para la gestión de reservaciones en el sistema'
+---
+
+## Obtener Reservaciones
+
+Retorna la lista de reservaciones activas, opcionalmente puede incluir filtros adicionales.
+
+### Endpoint
+
+```bash
+GET /api/v2/reservations
+```
+
+### Parámetros Query
+
+<ParamField query='notFilter' type='boolean'>
+  Si es true, no aplica filtros adicionales
+</ParamField>
+
+### Respuesta
+
+<ResponseField name='id' type='string'>
+  ID de la reservación
+</ResponseField>
+
+<ResponseField name='from' type='string'>
+  Fecha y hora de la reservación (formato date-time)
+</ResponseField>
+
+<ResponseField name='line_id' type='integer'>
+  ID de la línea
+</ResponseField>
+
+<ResponseField name='check_in' type='boolean'>
+  Si hizo check-in
+</ResponseField>
+
+<ResponseField name='deleted_at' type='string'>
+  Fecha de eliminación (formato date-time)
+</ResponseField>
+
+### Códigos de Respuesta
+
+| Código | Descripción                            |
+| ------ | -------------------------------------- |
+| 200    | Reservaciones recuperadas exitosamente |
+| 404    | No hay reservaciones                   |
+| 500    | Error interno                          |

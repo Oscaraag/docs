@@ -1,0 +1,36 @@
+---
+title: 'Módulos'
+description: 'Endpoints para la gestión de módulos en el sistema'
+---
+
+## Obtener Estado de Módulos
+
+Retorna el estado actual de todos los módulos registrados, incluyendo su estado de atención y tickets actuales.
+
+### Endpoint
+
+```bash
+GET /api/v2/modulos/state
+```
+
+### Respuesta
+
+<ResponseField name='id' type='string'>
+  ID del módulo
+</ResponseField>
+
+<ResponseField name='state' type='string'>
+  Estado del módulo. Valores posibles: `active`, `paused`, `offline`, `working`
+</ResponseField>
+
+<ResponseField name='current' type='object'>
+  Información del ticket actual
+  <Expandable title='Propiedades'>
+    <ResponseField name='cuid' type='string'>
+      ID del call actual
+    </ResponseField>
+    <ResponseField name='attending' type='boolean'>
+      Si está atendiendo
+    </ResponseField>
+  </Expandable>
+</ResponseField>{' '}

@@ -1,0 +1,53 @@
+{
+  "name": "API V2 ZeroQ Local",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#0069ED",
+    "light": "#4D9CFF",
+    "dark": "#0050B4"
+  },
+  "topbarLinks": [
+    {
+      "name": "Soporte",
+      "url": "mailto:soporte@zeroq.cl"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://dashboard.zeroq.cl"
+  },
+  "anchors": [
+    {
+      "name": "API Reference",
+      "icon": "book-open-cover",
+      "url": "api-reference"
+    },
+    {
+      "name": "Changelog",
+      "icon": "list",
+      "url": "https://changelog.zeroq.cl"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Introducción",
+      "pages": ["introduction", "quickstart"]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/attentions",
+        "api-reference/modulos",
+        "api-reference/reservations",
+        "api-reference/lines"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "website": "https://zeroq.cl"
+  }
+}
